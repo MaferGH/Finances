@@ -1,29 +1,294 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finances</title>
     <link rel="stylesheet" href="styles.css">
+    <title>Finanzas | Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-wallet logo-icon"></i>
+                <span>Finanzas Pro</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-item active">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transacciones</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-tags"></i>
+                    <span>Categorías</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span>Ahorros</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notificaciones</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </div>
+            </nav>
+            
+            <div class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar sesión</span>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 class="page-title">Dashboard</h1>
+                <div class="user-profile">
+                    <div class="user-avatar">FG</div>
+                    <span>Fernanda García</span>
+                </div>
+            </header>
+            
+            <!-- Summary Cards -->
+            <section class="summary-cards">
+                <div class="card">
+                    <div class="card-title">Balance Total</div>
+                    <div class="card-value">$12,458.90</div>
+                    <div class="card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>5.2% vs mes anterior</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Ingresos</div>
+                    <div class="card-value">$4,850.00</div>
+                    <div class="card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12.7% vs mes anterior</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Gastos</div>
+                    <div class="card-value">$2,913.45</div>
+                    <div class="card-change negative">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>3.1% vs mes anterior</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Ahorros</div>
+                    <div class="card-value">$1,935.55</div>
+                    <div class="card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8.3% vs mes anterior</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <!-- Main Chart -->
+                <div class="chart-container">
+                    <h2 class="chart-title">Flujo de Efectivo</h2>
+                    <canvas id="cashFlowChart"></canvas>
+                </div>
+                
+                <!-- Pie Chart -->
+                <div class="chart-container">
+                    <h2 class="chart-title">Distribución de Gastos</h2>
+                    <div class="transaction-pie-container">
+                        <canvas id="expensePieChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Recent Transactions -->
+            <section class="transactions-section">
+                <div class="section-header">
+                    <h2 class="section-title">Transacciones Recientes</h2>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nueva transacción
+                    </button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Descripción</th>
+                            <th>Fecha</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="transaction-category">
+                                    <div class="category-icon income">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <span>Salario</span>
+                                </div>
+                            </td>
+                            <td>Pago mensual</td>
+                            <td>15/06/2023</td>
+                            <td class="transaction-amount positive-amount">+$2,500.00</td>
+                            <td><span class="status-badge completed">Completado</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="transaction-category">
+                                    <div class="category-icon expense">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <span>Hipoteca</span>
+                                </div>
+                            </td>
+                            <td>Pago de hipoteca</td>
+                            <td>12/06/2023</td>
+                            <td class="transaction-amount negative-amount">-$1,200.00</td>
+                            <td><span class="status-badge completed">Completado</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="transaction-category">
+                                    <div class="category-icon expense">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
+                                    <span>Supermercado</span>
+                                    </div>
+                                </td>
+                            <td>Compra mensual</td>
+                            <td>10/06/2023</td>
+                            <td class="transaction-amount negative-amount">-$350.75</td>
+                            <td><span class="status-badge completed">Completado</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="transaction-category">
+                                    <div class="category-icon expense">
+                                        <i class="fas fa-car"></i>
+                                    </div>
+                                    <span>Transporte</span>
+                                </div>
+                            </td>
+                            <td>Gasolina</td>
+                            <td>08/06/2023</td>
+                            <td class="transaction-amount negative-amount">-$45.30</td>
+                            <td><span class="status-badge completed">Completado</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="transaction-category">
+                                    <div class="category-icon income">
+                                        <i class="fas fa-gift"></i>
+                                    </div>
+                                    <span>Regalo</span>
+                                </div>
+                            </td>
+                            <td>Cumpleaños</td>
+                            <td>05/06/2023</td>
+                            <td class="transaction-amount positive-amount">+$150.00</td>
+                            <td><span class="status-badge completed">Completado</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
 
-    <!--Hoy se me vino algo a la cabeza, como resultaria un sitio o app donde puedas administrar tus finanzas d e manera muy facil. Bueno, iniciare este mini proyecto donde planeo administrar mis finanzas y que todo funcione, la finalidad es mejorar cada día y entender aún más este mundo.-->
+    <script>
+        // Cash Flow Chart
+        const cashFlowCtx = document.getElementById('cashFlowChart').getContext('2d');
+        const cashFlowChart = new Chart(cashFlowCtx, {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: [4200, 4500, 4700, 4800, 4950, 4850],
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        fill: true
+                    },
+                    {
+                        label: 'Gastos',
+                        data: [3100, 2900, 3000, 2800, 2950, 2913],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
 
-    <div class="bg-white dark:bg-black rounded-lg px-6 py-8 ring shadow-xl ring-gray-900/5">
-  <div>
-    <span class="inline-flex items-center justify-center rounded-md bg-indigo-500 p-2 shadow-lg">
-      <svg class="h-6 w-6 stroke-white" ...>
-        <!-- ... -->
-      </svg>
-    </span>
-  </div>
-  <h3 class="text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight ">Writes upside-down</h3>
-  <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm ">
-    The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer space.
-  </p>
-</div>
-
+        // Expense Pie Chart
+        const expensePieCtx = document.getElementById('expensePieChart').getContext('2d');
+        const expensePieChart = new Chart(expensePieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Hipoteca', 'Comida', 'Transporte', 'Entretenimiento', 'Servicios', 'Otros'],
+                datasets: [{
+                    data: [1200, 630, 250, 180, 450, 203.45],
+                    backgroundColor: [
+                        '#3498db',
+                        '#2ecc71',
+                        '#e74c3c',
+                        '#f39c12',
+                        '#9b59b6',
+                        '#34495e'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    </script>
 </body>
 </html>
