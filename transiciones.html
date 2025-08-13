@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanzas MAF | Transacciones</title>
+    <!-- Reutiliza los estilos de code.html o reports.html -->
+    <link rel="stylesheet" href="path/to/your/styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Puedes copiar y pegar los estilos CSS de code.html aquí o en un archivo CSS externo */
+        /* Asegúrate de incluir todas las variables CSS y clases necesarias */
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2ecc71;
+            --secondary-dark: #27ae60;
+            --danger: #e74c3c;
+            --danger-dark: #c0392b;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--dark);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item i {
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* General Section Styling */
+        .section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Table Styling (from code.html, reused) */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.75rem;
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .transaction-category {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .income {
+            background-color: var(--secondary);
+        }
+
+        .expense {
+            background-color: var(--danger);
+        }
+
+        .transfer {
+            background-color: var(--primary);
+        }
+
+        .transaction-amount {
+            font-weight: 500;
+        }
+
+        .positive-amount {
+            color: var(--secondary);
+        }
+
+        .negative-amount {
+            color: var(--danger);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .completed {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--secondary);
+        }
+
+        .pending {
+            background-color: rgba(241, 196, 15, 0.1);
+            color: #f1c40f;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-wallet logo-icon"></i>
+                <span>Finanzas MAF</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <div class="nav-item active">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transacciones</span>
+                </div>
+                <a href="reporte.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </a>
+                <div class="nav-item">
+                    <i class="fas fa-tags"></i>
+                    <span>Categorías</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span>Ahorros</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notificaciones</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </div>
+            </nav>
+            
+            <div class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar sesión</span>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 class="page-title">Transacciones</h1>
+                <div class="user-profile">
+                    <div class="user-avatar">FG</div>
+                    <span>Fernanda García</span>
+                </div>
+            </header>
+            
+            <!-- Transaction List Section -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Todas las Transacciones</h2>
+                    <button class="btn btn-primary" onclick="openAddTransactionModal()">
+                        <i class="fas fa-plus"></i> Añadir Transacción
+                    </button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Descripción</th>
+                            <th>Fecha</th>
+                            <th>Monto</th>
+                            <th>Tipo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody">
+                        <!-- Transaction data will be loaded here by JavaScript -->
+                        <tr>
+                            <td>
+                                <div class="transaction-category">
+                                    <div class="category-icon income">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <span>Salario</span>
+                                </div>
+                            </td>
+                            <td>Pago mensual</td>
+                            <td>15/06/2025</td>
+                            <td class="transaction-amount positive-amount">+$2,500.00</td>
+                            <td>Ingreso</td>
+                            <td>
+                                <button class="btn" style="background-color: var(--primary); color: white;">Editar</button>
+                                <button class="btn" style="background-color: var(--danger); color: white;">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="transaction-category">
+                                    <div class="category-icon expense">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <span>Hipoteca</span>
+                                </div>
+                            </td>
+                            <td>Pago de hipoteca</td>
+                            <td>12/06/2025</td>
+                            <td class="transaction-amount negative-amount">-$1,200.00</td>
+                            <td>Gasto</td>
+                            <td>
+                                <button class="btn" style="background-color: var(--primary); color: white;">Editar</button>
+                                <button class="btn" style="background-color: var(--danger); color: white;">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Add/Edit Transaction Modal (Optional, for a more complete UI) -->
+            <!-- <div id="transactionModal" class="modal">
+                <div class="modal-content">
+                    <h2>Añadir/Editar Transacción</h2>
+                    <form>
+                        ... form fields ...
+                        <button type="submit">Guardar</button>
+                    </form>
+                </div>
+            </div> -->
+
+        </main>
+    </div>
+
+    <script>
+        // JavaScript para cargar y gestionar transacciones
+        // Puedes usar el mismo 'transactionsData' de reports.html o cargar desde una fuente real
+        // Funciones para añadir, editar, eliminar transacciones, etc.
+    </script>
+</body>
+</html>

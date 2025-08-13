@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanzas MAF | Reportes</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2ecc71;
+            --secondary-dark: #27ae60;
+            --danger: #e74c3c;
+            --danger-dark: #c0392b;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--dark);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item i {
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* General Section Styling */
+        .section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Filters and Controls */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .filter-group label {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .filter-group select,
+        .filter-group input[type="date"] {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+        }
+
+        /* Chart Specifics */
+        .chart-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Table Styling (from code.html, reused) */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.75rem;
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .transaction-category {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .income {
+            background-color: var(--secondary);
+        }
+
+        .expense {
+            background-color: var(--danger);
+        }
+
+        .transfer {
+            background-color: var(--primary);
+        }
+
+        .transaction-amount {
+            font-weight: 500;
+        }
+
+        .positive-amount {
+            color: var(--secondary);
+        }
+
+        .negative-amount {
+            color: var(--danger);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .completed {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--secondary);
+        }
+
+        .pending {
+            background-color: rgba(241, 196, 15, 0.1);
+            color: #f1c40f;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            .filters {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-wallet logo-icon"></i>
+                <span>Finanzas MAF</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="transiciones.html" class="nav-item">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transacciones</span>
+                </a>
+                <div class="nav-item active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-tags"></i>
+                    <span>Categorías</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span>Ahorros</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notificaciones</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </div>
+            </nav>
+            
+            <div class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar sesión</span>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 class="page-title">Reportes</h1>
+                <div class="user-profile">
+                    <div class="user-avatar">FG</div>
+                    <span>Fernanda García</span>
+                </div>
+            </header>
+            
+            <!-- Filters Section -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Filtros de Reporte</h2>
+                </div>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="reportType">Tipo de Reporte:</label>
+                        <select id="reportType">
+                            <option value="incomeVsExpense">Ingresos vs. Gastos</option>
+                            <option value="expenseByCategory">Gastos por Categoría</option>
+                            <option value="incomeByCategory">Ingresos por Categoría</option>
+                            <option value="cashFlow">Flujo de Efectivo Detallado</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="startDate">Fecha Inicio:</label>
+                        <input type="date" id="startDate" value="2025-01-01">
+                    </div>
+                    <div class="filter-group">
+                        <label for="endDate">Fecha Fin:</label>
+                        <input type="date" id="endDate" value="2025-06-30">
+                    </div>
+                    <div class="filter-group">
+                        <label for="categoryFilter">Categoría:</label>
+                        <select id="categoryFilter">
+                            <option value="">Todas</option>
+                            <option value="Salario">Salario</option>
+                            <option value="Hipoteca">Hipoteca</option>
+                            <option value="Supermercado">Supermercado</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Regalo">Regalo</option>
+                            <!-- Add more categories dynamically -->
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="generateReport()">Generar Reporte</button>
+                </div>
+            </section>
+
+            <!-- Report Charts Section -->
+            <section class="charts-section">
+                <div class="chart-container">
+                    <h2 class="chart-title" id="reportChartTitle">Reporte de Ingresos vs. Gastos</h2>
+                    <canvas id="reportChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Detailed Report Table -->
+            <section class="transactions-section">
+                <div class="section-header">
+                    <h2 class="section-title">Detalle del Reporte</h2>
+                </div>
+                <table id="reportTable">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Categoría</th>
+                            <th>Descripción</th>
+                            <th>Tipo</th>
+                            <th>Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Report data will be loaded here by JavaScript -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Sample Data (replace with actual data from backend)
+        const transactionsData = [
+            { date: '2025-01-15', category: 'Salario', description: 'Pago mensual', type: 'income', amount: 2500.00 },
+            { date: '2025-01-12', category: 'Hipoteca', description: 'Pago de hipoteca', type: 'expense', amount: 1200.00 },
+            { date: '2025-01-10', category: 'Supermercado', description: 'Compra mensual', type: 'expense', amount: 350.75 },
+            { date: '2025-02-15', category: 'Salario', description: 'Pago mensual', type: 'income', amount: 2600.00 },
+            { date: '2025-02-12', category: 'Hipoteca', description: 'Pago de hipoteca', type: 'expense', amount: 1200.00 },
+            { date: '2025-02-08', category: 'Transporte', description: 'Gasolina', type: 'expense', amount: 45.30 },
+            { date: '2025-03-15', category: 'Salario', description: 'Pago mensual', type: 'income', amount: 2700.00 },
+            { date: '2025-03-10', category: 'Supermercado', description: 'Compra mensual', type: 'expense', amount: 380.00 },
+            { date: '2025-03-05', category: 'Regalo', description: 'Cumpleaños', type: 'income', amount: 150.00 },
+            { date: '2025-04-15', category: 'Salario', description: 'Pago mensual', type: 'income', amount: 2800.00 },
+            { date: '2025-04-12', category: 'Hipoteca', description: 'Pago de hipoteca', type: 'expense', amount: 1200.00 },
+            { date: '2025-04-01', category: 'Servicios', description: 'Electricidad', type: 'expense', amount: 80.00 },
+            { date: '2025-05-15', category: 'Salario', description: 'Pago mensual', type: 'income', amount: 2950.00 },
+            { date: '2025-05-10', category: 'Entretenimiento', description: 'Cine', type: 'expense', amount: 30.00 },
+            { date: '2025-06-15', category: 'Salario', description: 'Pago mensual', type: 'income', amount: 2500.00 },
+            { date: '2025-06-12', category: 'Hipoteca', description: 'Pago de hipoteca', type: 'expense', amount: 1200.00 },
+            { date: '2025-06-10', category: 'Supermercado', description: 'Compra mensual', type: 'expense', amount: 350.75 },
+            { date: '2025-06-08', category: 'Transporte', description: 'Gasolina', type: 'expense', amount: 45.30 },
+            { date: '2025-06-05', category: 'Regalo', description: 'Cumpleaños', type: 'income', amount: 150.00 },
+        ];
+
+        let reportChart;
+
+        function generateReport() {
+            const reportType = document.getElementById('reportType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+
+            const filteredData = transactionsData.filter(t => {
+                const transactionDate = new Date(t.date);
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                return transactionDate >= start && transactionDate <= end &&
+                       (categoryFilter === '' || t.category === categoryFilter);
+            });
+
+            updateReportChart(reportType, filteredData);
+            updateReportTable(filteredData);
+        }
+
+        function updateReportChart(reportType, data) {
+            const ctx = document.getElementById('reportChart').getContext('2d');
+            const chartTitleElement = document.getElementById('reportChartTitle');
+
+            if (reportChart) {
+                reportChart.destroy(); // Destroy previous chart instance
+            }
+
+            let chartData = {};
+            let chartOptions = {};
+            let chartType = 'bar'; // Default chart type
+
+            switch (reportType) {
+                case 'incomeVsExpense':
+                    chartTitleElement.textContent = 'Reporte de Ingresos vs. Gastos';
+                    const monthlyData = data.reduce((acc, t) => {
+                        const month = new Date(t.date).toLocaleString('es-ES', { month: 'short', year: 'numeric' });
+                        if (!acc[month]) {
+                            acc[month] = { income: 0, expense: 0 };
+                        }
+                        if (t.type === 'income') {
+                            acc[month].income += t.amount;
+                        } else {
+                            acc[month].expense += t.amount;
+                        }
+                        return acc;
+                    }, {});
+
+                    const labels = Object.keys(monthlyData).sort((a, b) => new Date(a) - new Date(b));
+                    const incomes = labels.map(month => monthlyData[month].income);
+                    const expenses = labels.map(month => monthlyData[month].expense);
+
+                    chartData = {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Ingresos',
+                                data: incomes,
+                                backgroundColor: 'rgba(46, 204, 113, 0.8)',
+                                borderColor: '#2ecc71',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Gastos',
+                                data: expenses,
+                                backgroundColor: 'rgba(231, 76, 60, 0.8)',
+                                borderColor: '#e74c3c',
+                                borderWidth: 1
+                            }
+                        ]
+                    };
+                    chartType = 'bar';
+                    chartOptions = {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: { mode: 'index', intersect: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    };
+                    break;
+
+                case 'expenseByCategory':
+                    chartTitleElement.textContent = 'Gastos por Categoría';
+                    const expenseCategories = data.filter(t => t.type === 'expense').reduce((acc, t) => {
+                        acc[t.category] = (acc[t.category] || 0) + t.amount;
+                        return acc;
+                    }, {});
+
+                    chartData = {
+                        labels: Object.keys(expenseCategories),
+                        datasets: [{
+                            data: Object.values(expenseCategories),
+                            backgroundColor: [
+                                '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#34495e', '#1abc9c', '#e67e22'
+                            ],
+                            borderWidth: 1
+                        }]
+                    };
+                    chartType = 'doughnut';
+                    chartOptions = {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'right' },
+                            tooltip: { callbacks: { label: (context) => `${context.label}: $${context.raw.toFixed(2)}` } }
+                        },
+                        cutout: '70%'
+                    };
+                    break;
+
+                case 'incomeByCategory':
+                    chartTitleElement.textContent = 'Ingresos por Categoría';
+                    const incomeCategories = data.filter(t => t.type === 'income').reduce((acc, t) => {
+                        acc[t.category] = (acc[t.category] || 0) + t.amount;
+                        return acc;
+                    }, {});
+
+                    chartData = {
+                        labels: Object.keys(incomeCategories),
+                        datasets: [{
+                            data: Object.values(incomeCategories),
+                            backgroundColor: [
+                                '#2ecc71', '#3498db', '#1abc9c', '#9b59b6', '#f39c12', '#e67e22'
+                            ],
+                            borderWidth: 1
+                        }]
+                    };
+                    chartType = 'pie';
+                    chartOptions = {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'right' },
+                            tooltip: { callbacks: { label: (context) => `${context.label}: $${context.raw.toFixed(2)}` } }
+                        }
+                    };
+                    break;
+
+                case 'cashFlow':
+                    chartTitleElement.textContent = 'Flujo de Efectivo Detallado';
+                    const dailyCashFlow = data.reduce((acc, t) => {
+                        if (!acc[t.date]) {
+                            acc[t.date] = 0;
+                        }
+                        acc[t.date] += (t.type === 'income' ? t.amount : -t.amount);
+                        return acc;
+                    }, {});
+
+                    const sortedDates = Object.keys(dailyCashFlow).sort();
+                    const cumulativeCashFlow = [];
+                    let currentBalance = 0;
+                    sortedDates.forEach(date => {
+                        currentBalance += dailyCashFlow[date];
+                        cumulativeCashFlow.push(currentBalance);
+                    });
+
+                    chartData = {
+                        labels: sortedDates,
+                        datasets: [{
+                            label: 'Balance Acumulado',
+                            data: cumulativeCashFlow,
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    };
+                    chartType = 'line';
+                    chartOptions = {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: { mode: 'index', intersect: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: false }
+                        }
+                    };
+                    break;
+            }
+
+            reportChart = new Chart(ctx, {
+                type: chartType,
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+        function updateReportTable(data) {
+            const tableBody = document.querySelector('#reportTable tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            data.sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date
+
+            data.forEach(transaction => {
+                const row = tableBody.insertRow();
+                row.insertCell().textContent = transaction.date;
+                row.insertCell().textContent = transaction.category;
+                row.insertCell().textContent = transaction.description;
+                row.insertCell().textContent = transaction.type === 'income' ? 'Ingreso' : 'Gasto';
+                const amountCell = row.insertCell();
+                amountCell.textContent = `${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toFixed(2)}`;
+                amountCell.classList.add(transaction.type === 'income' ? 'positive-amount' : 'negative-amount');
+            });
+        }
+
+        // Initial report generation on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            generateReport();
+        });
+    </script>
+</body>
+</html>

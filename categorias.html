@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanzas Pro | Categorías</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Enlaza el archivo CSS externo -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-wallet logo-icon"></i>
+                <span>Finanzas Pro</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="code.html" class="nav-item">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="transactions.html" class="nav-item">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transacciones</span>
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </a>
+                <div class="nav-item active">
+                    <i class="fas fa-tags"></i>
+                    <span>Categorías</span>
+                </div>
+                <a href="savings.html" class="nav-item">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span>Ahorros</span>
+                </a>
+                <a href="notifications.html" class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notificaciones</span>
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </a>
+            </nav>
+            
+            <div class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar sesión</span>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 class="page-title">Categorías</h1>
+                <div class="user-profile">
+                    <div class="user-avatar">FG</div>
+                    <span>Fernanda García</span>
+                </div>
+            </header>
+            
+            <!-- Add New Category Section -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Añadir Nueva Categoría</h2>
+                </div>
+                <form id="addCategoryForm">
+                    <div class="form-group">
+                        <label for="categoryName">Nombre de la Categoría:</label>
+                        <input type="text" id="categoryName" placeholder="Ej: Comida, Transporte, Salario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryType">Tipo:</label>
+                        <select id="categoryType" required>
+                            <option value="expense">Gasto</option>
+                            <option value="income">Ingreso</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryIcon">Icono (Clase Font Awesome):</label>
+                        <input type="text" id="categoryIcon" placeholder="Ej: fas fa-shopping-cart" value="fas fa-question-circle">
+                        <small>Puedes encontrar iconos en <a href="https://fontawesome.com/v5/search" target="_blank">Font Awesome</a></small>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Añadir Categoría</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Existing Categories List -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Mis Categorías</h2>
+                </div>
+                <div class="category-list" id="categoryList">
+                    <!-- Categories will be loaded here by JavaScript -->
+                    <div class="card category-item">
+                        <div class="category-info">
+                            <div class="category-icon expense"><i class="fas fa-home"></i></div>
+                            <span>Hipoteca</span>
+                        </div>
+                        <div class="category-actions">
+                            <button class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="card category-item">
+                        <div class="category-info">
+                            <div class="category-icon income"><i class="fas fa-dollar-sign"></i></div>
+                            <span>Salario</span>
+                        </div>
+                        <div class="category-actions">
+                            <button class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="card category-item">
+                        <div class="category-info">
+                            <div class="category-icon expense"><i class="fas fa-shopping-cart"></i></div>
+                            <span>Supermercado</span>
+                        </div>
+                        <div class="category-actions">
+                            <button class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Sample data for categories (in a real app, this would come from a backend)
+        let categories = [
+            { id: 1, name: 'Hipoteca', type: 'expense', icon: 'fas fa-home' },
+            { id: 2, name: 'Salario', type: 'income', icon: 'fas fa-dollar-sign' },
+            { id: 3, name: 'Supermercado', type: 'expense', icon: 'fas fa-shopping-cart' },
+            { id: 4, name: 'Transporte', type: 'expense', icon: 'fas fa-car' },
+            { id: 5, name: 'Regalo', type: 'income', icon: 'fas fa-gift' },
+        ];
+
+        const categoryListDiv = document.getElementById('categoryList');
+        const addCategoryForm = document.getElementById('addCategoryForm');
+
+        function renderCategories() {
+            categoryListDiv.innerHTML = ''; // Clear existing categories
+            categories.forEach(category => {
+                const categoryItem = document.createElement('div');
+                categoryItem.classList.add('card', 'category-item');
+                categoryItem.innerHTML = `
+                    <div class="category-info">
+                        <div class="category-icon ${category.type}"><i class="${category.icon}"></i></div>
+                        <span>${category.name}</span>
+                    </div>
+                    <div class="category-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editCategory(${category.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteCategory(${category.id})"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                categoryListDiv.appendChild(categoryItem);
+            });
+        }
+
+        function addCategory(event) {
+            event.preventDefault();
+            const name = document.getElementById('categoryName').value;
+            const type = document.getElementById('categoryType').value;
+            const icon = document.getElementById('categoryIcon').value;
+
+            if (name) {
+                const newId = categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1;
+                categories.push({ id: newId, name, type, icon });
+                renderCategories();
+                addCategoryForm.reset(); // Clear form
+            } else {
+                alert('El nombre de la categoría no puede estar vacío.');
+            }
+        }
+
+        function editCategory(id) {
+            // In a real application, this would open a modal or form to edit the category
+            alert(`Editar categoría con ID: ${id}`);
+            // Example: Find category, populate form, allow update
+            const categoryToEdit = categories.find(c => c.id === id);
+            if (categoryToEdit) {
+                // For simplicity, let's just prompt for a new name
+                const newName = prompt(`Editar nombre para "${categoryToEdit.name}":`, categoryToEdit.name);
+                if (newName !== null && newName.trim() !== '') {
+                    categoryToEdit.name = newName.trim();
+                    renderCategories();
+                }
+            }
+        }
+
+        function deleteCategory(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta categoría?')) {
+                categories = categories.filter(category => category.id !== id);
+                renderCategories();
+            }
+        }
+
+        // Event Listeners
+        addCategoryForm.addEventListener('submit', addCategory);
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', renderCategories);
+    </script>
+</body>
+</html>
